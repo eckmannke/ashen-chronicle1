@@ -1,0 +1,13 @@
+{
+  "name": "Ashen Chronicle",
+  "short_name": "Ashen",
+  "description": "A Dark Souls habit tracker RPG",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#050403",
+  "theme_color": "#b06020",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
