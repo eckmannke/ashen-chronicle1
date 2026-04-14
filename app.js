@@ -281,28 +281,97 @@ function doComplete(id,amt){closeHabitModal();completeHabit(id,amt);}
 function closeHabitModal(){document.getElementById('habit-overlay').classList.add('hidden');_cHabit=null;}
 
 // ── RENDER: BOSS ──────────────────────────────────────────────
+
+// ── RENDER: BOSS ──────────────────────────────────────────────
 function renderBoss(){
   const bc=currentBossConfig(),tk=today();
-  const wkDay=S.boss.weekStart?daysBetween(S.boss.weekStart,tk):0,daysLeft=Math.max(0,7-wkDay);
+  const wkDay=S.boss.weekStart?daysBetween(S.boss.weekStart,tk):0;
+  const daysLeft=Math.max(0,7-wkDay);
   const hpPct=S.boss.currentHp!==null?(S.boss.currentHp/S.boss.maxHp*100):0;
-  if(S.boss.currentHp===null){const hist=S.boss.history.slice(0,6).map(h=>`<div class="history-row ${h.won?'victory':'defeat'}"><span>${h.name}</span><span>${h.won?'⚔ Victory':'💀 Defeat'}</span></div>`).join('')||'<div style="color:var(--text3);font-size:13px">No battles yet.</div>';document.getElementById('tab-boss').innerHTML=`<div class="boss-waiting"><div class="boss-waiting-ico">🕯</div><h2>Resting at the Bonfire</h2><p>A new adversary will appear soon.</p></div><div class="card"><div class="card-label">Battle History</div>${hist}</div>`;return;}
-  const markers=S.boss.phaseEffects.map((_,i)=>{const t=(1-(i+1)/(S.boss.phaseEffects.length+1))*100;return`<div style="position:absolute;left:${t}%;top:-4px;width:2px;height:calc(100%+8px);background:${S.boss.triggeredCount>i?'#55555588':'#c8a04088'};transform:translateX(-50%);z-index:2"></div>`;}).join('');
-  const phasesHtml=S.boss.activePhases.map(id=>{const ph=PHASE_POOL.find(p=>p.id===id);return`<div class="phase-card"><strong>${ph.icon} ${ph.name}</strong> ${ph.desc}</div>`;}).join('');
-  const enemiesHtml=S.boss.basicEnemies.map(e=>`<div class="enemy-row ${e.defeated?'defeated':''}"><span>${e.defeated?'☠ Hollow (defeated)':'⚔ Hollow — '+HABIT_CFG[e.habitId].name+' on day '+e.day}</span><span style="color:var(--gold)">${e.defeated?'+loot':MATERIALS[Object.keys(e.loot)[0]].icon}</span></div>`).join('');
-  const logHtml=[...S.boss.log].reverse().slice(0,25).map(e=>{const cls={hit:'log-hit',heal:'log-heal',phase:'log-phase',appear:'log-appear',victory:'log-victory',defeat:'log-defeat',loot:'log-loot'}[e.type]||'';return`<div class="log-entry ${cls}">${e.date} · ${e.text}</div>`;}).join('');
-  const histHtml=S.boss.history.slice(0,5).map(h=>`<div class="history-row ${h.won?'victory':'defeat'}"><span>${h.name}</span><span>${h.won?'⚔ Victory':'💀 Defeat'}</span></div>`).join('')||'<div style="color:var(--text3);font-size:13px">No previous battles.</div>';
+  const lore=BOSS_LORE[bc.id]||{epithet:'',intro:'',challenge:'',quotes:{full:'',half:'',low:'',dying:''},victory:'',defeat:''};
+
+  if(S.boss.currentHp===null){
+    const hist=S.boss.history.slice(0,6).map(h=>{
+      const hl=BOSS_LORE[h.id]||{};
+      return`<div class="history-row ${h.won?'victory':'defeat'}">
+        <div><div style="font-family:'Cinzel',serif;font-size:13px">${h.name}</div><div style="font-size:11px;color:var(--text3);font-style:italic">${hl.epithet||''}</div></div>
+        <span>${h.won?'⚔ Victory':'💀 Defeat'}</span>
+      </div>`;}).join('')||'<div style="color:var(--text3);font-size:13px">No battles yet.</div>';
+    document.getElementById('tab-boss').innerHTML=`
+      <div class="boss-waiting"><div class="boss-waiting-ico">🕯</div><h2>Resting at the Bonfire</h2><p>A new adversary will appear soon.</p></div>
+      <div class="card"><div class="card-label">Battle History</div>${hist}</div>`;
+    return;
+  }
+
+  // Current lore quote based on HP
+  let curQuote=lore.quotes.full;
+  if(hpPct<25)curQuote=lore.quotes.dying;
+  else if(hpPct<50)curQuote=lore.quotes.low;
+  else if(hpPct<75)curQuote=lore.quotes.half;
+
+  const markers=S.boss.phaseEffects.map((_,i)=>{
+    const t=(1-(i+1)/(S.boss.phaseEffects.length+1))*100;
+    return`<div style="position:absolute;left:${t}%;top:-4px;width:2px;height:calc(100%+8px);background:${S.boss.triggeredCount>i?'#55555588':'#c8a04088'};transform:translateX(-50%);z-index:2"></div>`;
+  }).join('');
+
+  const phasesHtml=S.boss.activePhases.map(id=>{
+    const ph=PHASE_POOL.find(p=>p.id===id);
+    return`<div class="phase-card"><strong>${ph.icon} ${ph.name}</strong> ${ph.desc}</div>`;
+  }).join('');
+
+  const enemiesHtml=S.boss.basicEnemies.map(e=>`
+    <div class="enemy-row ${e.defeated?'defeated':''}">
+      <span>${e.defeated?'☠ Hollow (defeated)':'⚔ Hollow — complete '+HABIT_CFG[e.habitId].name+' on day '+e.day}</span>
+      <span style="color:var(--gold)">${e.defeated?'+loot':MATERIALS[Object.keys(e.loot)[0]].icon}</span>
+    </div>`).join('');
+
+  const logHtml=[...S.boss.log].reverse().slice(0,20).map(e=>{
+    const cls={hit:'log-hit',heal:'log-heal',phase:'log-phase',appear:'log-appear',victory:'log-victory',defeat:'log-defeat',loot:'log-loot'}[e.type]||'';
+    return`<div class="log-entry ${cls}">${e.date} · ${e.text}</div>`;
+  }).join('');
+
+  const histHtml=S.boss.history.slice(0,5).map(h=>`
+    <div class="history-row ${h.won?'victory':'defeat'}">
+      <span>${h.name}</span><span>${h.won?'⚔ Victory':'💀 Defeat'}</span>
+    </div>`).join('')||'<div style="color:var(--text3);font-size:13px">No previous battles.</div>';
+
+  const urgentClass=daysLeft<=2?'urgent':'';
+
   document.getElementById('tab-boss').innerHTML=`
-  <div class="boss-portrait t${bc.tier}"><div class="boss-bg-glow"></div><div class="boss-sil">${BOSS_ICONS[bc.tier]}</div></div>
-  <div class="boss-info-row"><div><div class="boss-game-tag">${bc.game}</div><div class="boss-name-big">${bc.name}</div></div><div class="boss-tier-stars">${'★'.repeat(bc.tier)}${'☆'.repeat(5-bc.tier)}</div></div>
-  <div class="boss-meta"><div class="boss-meta-stat"><div class="boss-meta-val ${daysLeft<=2?'urgent':''}">${daysLeft}</div><div class="boss-meta-lbl">Days Left</div></div><div class="boss-meta-stat"><div class="boss-meta-val">${Math.round(hpPct)}%</div><div class="boss-meta-lbl">HP Remaining</div></div><div class="boss-meta-stat"><div class="boss-meta-val">${S.boss.activePhases.length}/${S.boss.phaseEffects.length}</div><div class="boss-meta-lbl">Phases</div></div></div>
-  <div class="hp-section"><div class="hp-header"><span>Boss HP</span><span>${Math.round(S.boss.currentHp).toLocaleString()} / ${S.boss.maxHp.toLocaleString()}</span></div><div class="hp-bar-wrap" style="position:relative;overflow:visible"><div class="hp-bar-fill" style="width:${hpPct}%"></div>${markers}</div></div>
-  ${phasesHtml?`<div class="phases-active">${phasesHtml}</div>`:''}
-  <div class="card"><div class="card-label">Hollows on the Path</div>${enemiesHtml||'<div style="color:var(--text3);font-size:13px">No hollows remain.</div>'}</div>
-  <div class="card"><div class="card-label">Combat Log</div><div class="log-entries">${logHtml}</div></div>
-  <div class="card"><div class="card-label">Past Battles</div>${histHtml}</div>`;
+    <!-- BOSS CODEX CARD -->
+    <div class="boss-codex t${bc.tier}">
+      <div class="boss-codex-icon">${BOSS_ICONS[bc.tier]}</div>
+      <div class="boss-codex-body">
+        <div class="boss-codex-game">${bc.game} · ${'★'.repeat(bc.tier)}${'☆'.repeat(5-bc.tier)}</div>
+        <div class="boss-codex-name">${bc.name}</div>
+        <div class="boss-codex-epithet">"${lore.epithet}"</div>
+        <div class="boss-codex-intro">${lore.intro}</div>
+        <div class="boss-codex-challenge">❝ ${lore.challenge} ❞</div>
+      </div>
+    </div>
+
+    <!-- HP & STATUS -->
+    <div class="card">
+      <div class="boss-status-row">
+        <div class="boss-meta-stat"><div class="boss-meta-val ${urgentClass}">${daysLeft}</div><div class="boss-meta-lbl">Days Left</div></div>
+        <div class="boss-meta-stat"><div class="boss-meta-val">${Math.round(hpPct)}%</div><div class="boss-meta-lbl">HP Remaining</div></div>
+        <div class="boss-meta-stat"><div class="boss-meta-val">${S.boss.activePhases.length}/${S.boss.phaseEffects.length}</div><div class="boss-meta-lbl">Phases</div></div>
+      </div>
+      <div class="hp-header" style="margin-top:10px"><span>Boss HP</span><span>${Math.round(S.boss.currentHp).toLocaleString()} / ${S.boss.maxHp.toLocaleString()}</span></div>
+      <div class="hp-bar-wrap" style="position:relative;overflow:visible;margin-top:5px">
+        <div class="hp-bar-fill" style="width:${hpPct}%"></div>${markers}
+      </div>
+      <!-- Current mood quote -->
+      <div class="boss-mood-quote">${curQuote}</div>
+    </div>
+
+    ${phasesHtml?`<div class="phases-active">${phasesHtml}</div>`:''}
+
+    <div class="card"><div class="card-label">Hollows on the Path</div>${enemiesHtml||'<div style="color:var(--text3);font-size:13px">No hollows remain.</div>'}</div>
+    <div class="card"><div class="card-label">Combat Log</div><div class="log-entries">${logHtml}</div></div>
+    <div class="card"><div class="card-label">Past Battles</div>${histHtml}</div>`;
 }
 
-// ── RENDER: STATS ─────────────────────────────────────────────
 function renderStats(){
   const sl=soulLevel(),ember=S.player.ember;
   const attrsHtml=Object.entries(S.attributes).map(([id,a])=>{const cfg=ATTR_CFG[id],xpPct=(a.xp/xpNeeded(a.level))*100,bonus=getArmorXpBonus(id);return`<div class="attr-card"><div class="attr-card-top"><div class="attr-ico-big" style="border-color:${cfg.color};color:${cfg.color}">${cfg.icon}</div><div class="attr-body"><div class="attr-name-big">${cfg.name}</div><div class="attr-desc-small">${cfg.desc}${bonus>0?` · <span style="color:var(--gold)">+${Math.round(bonus*100)}% XP</span>`:''}</div></div><div class="attr-level-badge" style="color:${cfg.color}">${a.level}</div></div><div class="attr-xp-bar-lg"><div class="attr-xp-fill-lg" style="width:${xpPct}%;background:${cfg.color}"></div></div><div class="attr-xp-row"><span>${Math.round(a.xp)} / ${xpNeeded(a.level)} XP</span><span>Total: ${Math.round(a.totalXp)}</span></div></div>`;}).join('');

@@ -6,14 +6,14 @@
   --bg:        #080604;
   --bg2:       #110e09;
   --bg3:       #1a1610;
-  --surface:   #1f1a12;
-  --border:    #3a3020;
+  --surface:   #221c13;
+  --border:    #4a3f28;
   --ember:     #c07020;
   --ember2:    #ff9930;
   --gold:      #c8a040;
-  --text:      #c0aa88;
-  --text2:     #8a7560;
-  --text3:     #5a4a38;
+  --text:      #e2d0b0;
+  --text2:     #c4a882;
+  --text3:     #8a7258;
   --red:       #c03028;
   --green:     #40a050;
   --nav-h:     64px;
@@ -882,3 +882,90 @@ body {
 .avatar-wrap { width: 180px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 10px 8px; }
 
 /* Service worker update — bump cache name in sw.js */
+
+/* ============================================================
+   BOSS LORE STYLES
+   ============================================================ */
+
+/* Boss Codex Card */
+.boss-codex {
+  display: flex;
+  gap: 14px;
+  padding: 18px 16px;
+  margin-bottom: 12px;
+  border-radius: var(--r);
+  border: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+.boss-codex::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: .06;
+}
+.t1.boss-codex::before { background: radial-gradient(ellipse at 20% 50%, #8b5a30, transparent 70%); }
+.t2.boss-codex::before { background: radial-gradient(ellipse at 20% 50%, #306080, transparent 70%); }
+.t3.boss-codex::before { background: radial-gradient(ellipse at 20% 50%, #602080, transparent 70%); }
+.t4.boss-codex::before { background: radial-gradient(ellipse at 20% 50%, #800010, transparent 70%); }
+.t5.boss-codex::before { background: radial-gradient(ellipse at 20% 50%, #c0a000, transparent 70%); }
+.boss-codex::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold)55, transparent);
+}
+
+.boss-codex-icon {
+  font-size: 52px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  animation: bossidle 3s ease-in-out infinite;
+}
+.boss-codex-body { flex: 1; min-width: 0; }
+.boss-codex-game { font-size: 10px; color: var(--text3); letter-spacing: .12em; text-transform: uppercase; margin-bottom: 4px; }
+.boss-codex-name { font-family: 'Cinzel', serif; font-size: 18px; color: var(--gold); line-height: 1.2; margin-bottom: 3px; }
+.boss-codex-epithet { font-size: 12px; color: var(--ember2); font-style: italic; margin-bottom: 10px; }
+.boss-codex-intro { font-size: 13px; color: var(--text2); line-height: 1.6; margin-bottom: 10px; }
+.boss-codex-challenge {
+  font-size: 13px;
+  color: var(--text);
+  font-style: italic;
+  padding: 8px 12px;
+  border-left: 2px solid var(--ember);
+  background: var(--ember)0d;
+  border-radius: 0 var(--r) var(--r) 0;
+  line-height: 1.5;
+}
+
+/* Mood quote (changes with HP) */
+.boss-mood-quote {
+  margin-top: 12px;
+  font-size: 13px;
+  color: var(--text2);
+  font-style: italic;
+  line-height: 1.6;
+  padding: 8px 12px;
+  border-top: 1px solid var(--border);
+  text-align: center;
+}
+
+/* Boss status row */
+.boss-status-row {
+  display: flex;
+  gap: 14px;
+}
+
+/* History row improved */
+.history-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--border);
+  gap: 10px;
+}
+.history-row:last-child { border-bottom: none; }

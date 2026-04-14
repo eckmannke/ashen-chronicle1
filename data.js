@@ -162,3 +162,244 @@ function _checkAllHabitsWeek(s){
 }
 function _checkWinStreak(s,n){if(s.boss.history.length<n)return false;return s.boss.history.slice(0,n).every(h=>h.won);}
 function _readingHours(s){return Object.values(s.habits.reading.completions).reduce((sum,c)=>sum+(c.amount/20),0);}
+
+// ============================================================
+// BOSS LORE
+// Each boss is a manifestation of a human weakness.
+// ============================================================
+const BOSS_LORE = {
+  asylum: {
+    epithet: 'Wächter der leeren Tage',
+    intro: 'Er schläft nicht. Er wartet. Schon immer hat er an dieser Schwelle gestanden und zugeschaut, wie Menschen umkehren, bevor sie überhaupt beginnen.',
+    challenge: 'Was hält dich heute von dem ab, was du dir gestern versprochen hast?',
+    quotes: {
+      full:  'Er beobachtet dich reglos. Er kennt dieses Gesicht — das Gesicht von jemandem, der es diesmal wirklich ernst meint.',
+      half:  'Er hebt den Kopf. Die Hälfte seiner Besucher sind schon weg. Du noch nicht.',
+      low:   'Er wankt. Er hat das noch nicht oft erlebt.',
+      dying: 'Zum ersten Mal in langer Zeit: Unruhe in seinen Augen.'
+    },
+    victory: 'Der Wächter fällt. Irgendwo öffnet sich eine Tür, die du nie bemerkt hattest.',
+    defeat:  'Er setzt sich wieder hin. Er weiß: Die meisten kommen zurück. Und die meisten gehen wieder.'
+  },
+  iudex: {
+    epithet: 'Der Richter, der nicht glaubt',
+    intro: 'Er wurde einst geschickt, um den Würdigen den Weg zu öffnen. Dann wartete er so lange, dass er aufgehört hat, an Würdige zu glauben.',
+    challenge: 'Bist du würdig — oder erzählst du dir das nur?',
+    quotes: {
+      full:  'Er mustert dich mit der Gleichgültigkeit eines Mannes, der tausend solche Versprechen gehört hat.',
+      half:  'Sein Griff um die Hellebarde wird fester. Vielleicht doch.',
+      low:   'Er kämpft jetzt mit einer Intensität, die nach Überraschung aussieht.',
+      dying: 'Ein letzter Blick. Diesmal ohne Zweifel.'
+    },
+    victory: 'Gundyr fällt auf ein Knie. Der Weg ist frei — nicht weil er dich durchlässt, sondern weil er aufgehört hat, dir im Weg zu stehen.',
+    defeat:  'Er tritt zur Seite. Noch nicht bereit, sagt sein Blick. Beweis das Gegenteil.'
+  },
+  vordt: {
+    epithet: 'Das Tier der frühen Aufgabe',
+    intro: 'Er war einmal ein Ritter. Dann kam eine Kälte, die nicht aus dem Winter kam — sie kam von innen. Seitdem ist nur noch das Tier übrig.',
+    challenge: 'Wie lange hältst du durch, wenn es unangenehm wird?',
+    quotes: {
+      full:  'Die Kälte um ihn herum ist kein Wetter. Sie ist Gewohnheit. Die Gewohnheit, nicht weiterzumachen.',
+      half:  'Er spürt die Wärme deiner Konsistenz. Sie irritiert ihn.',
+      low:   'Das Eis bricht. Nicht das seiner Umgebung — das in seiner Brust.',
+      dying: 'Er friert ein letztes Mal. Diesmal aus Überraschung.'
+    },
+    victory: 'Die Kälte weicht. Dort wo er stand, ist jetzt etwas Warmes — schwer zu benennen, aber spürbar.',
+    defeat:  'Die Kälte breitet sich wieder aus. Morgen ist sie schon vertraut.'
+  },
+  dragonrider: {
+    epithet: 'Hüter verlorener Schwüre',
+    intro: 'Er hat einen Eid geleistet. Dann vergessen, wozu. Jetzt bewacht er die Form des Versprechens, ohne dessen Inhalt zu kennen.',
+    challenge: 'Welche Versprechen hast du dir selbst schon gebrochen?',
+    quotes: {
+      full:  'Er bewegt sich mechanisch. Ein Ritual ohne Bedeutung — bis du es mit Bedeutung füllst.',
+      half:  'Er stockt. In ihm regt sich etwas, das er längst begraben glaubte.',
+      low:   'Die Bewegungen werden unregelmäßiger. Etwas wacht auf.',
+      dying: 'Er erinnert sich. Zu spät — aber er erinnert sich.'
+    },
+    victory: 'Der Dragonrider sinkt. Ein Schwur ist gebrochen worden — aber der richtige.',
+    defeat:  'Das Ritual geht weiter. Wie immer. Wie jeden Tag, wenn du nicht erscheinst.'
+  },
+  margit: {
+    epithet: 'Herold der tausend Gründe',
+    intro: 'Er braucht keine Waffe. Seine stärkste Fähigkeit ist das Wort. Kein Mensch, der je aufgehört hat, hatte keinen Grund dafür — und Margit kennt sie alle.',
+    challenge: 'Welchen Grund hast du dir heute schon zurechtgelegt?',
+    quotes: {
+      full:  '"Du bist müde. Du hast Stress. Morgen wäre besser." Er lächelt. Er hat Recht — und er weiß, dass das das Problem ist.',
+      half:  'Er ist ruhiger geworden. Weniger Worte. Das ist gefährlicher.',
+      low:   '"Interessant." Er meint es ernst. Er sieht das nicht oft.',
+      dying: 'Die Worte versiegen. Was bleibt, ist Stille — und Respekt.'
+    },
+    victory: 'Margit fällt schweigend. Das ist das lauteste Geräusch, das du je gehört hast.',
+    defeat:  'Er verbeugt sich leicht. "Bis morgen," sagt er. "Ich bin immer da."'
+  },
+  watchers: {
+    epithet: 'Das Chaos der halben Entscheidungen',
+    intro: 'Sie waren einmal eins. Dann spaltete sich ihr Wille — jeder in eine andere Richtung. Seitdem kämpfen sie gegeneinander und gegen alles andere gleichzeitig.',
+    challenge: 'Wie viele Dinge tust du halbherzig, statt eines vollständig?',
+    quotes: {
+      full:  'Sie bewegen sich unkoordiniert. Jeder will etwas anderes. Zusammen blockieren sie jeden Fortschritt.',
+      half:  'Ein Wächter fällt — und steht wieder auf, stärker. Das Chaos organisiert sich.',
+      low:   'Sie kämpfen jetzt wie ein einziger Körper. Zu spät gelernt, aber gelernt.',
+      dying: 'Die letzte Flamme flackert. In ihr: alle Wege, die nicht gegangen wurden.'
+    },
+    victory: 'Die Wächter sinken. Der Staub setzt sich. Und du merkst: Du hast dich entschieden.',
+    defeat:  'Das Chaos bleibt bestehen. Es wartet geduldig auf die nächste unfertige Woche.'
+  },
+  ape: {
+    epithet: 'Das ungezähmte Ich',
+    intro: 'Er hat kein Ziel. Er hat keinen Plan. Er handelt aus reinem Instinkt — und Instinkt sagt: Ruh dich aus. Iss. Vermeide Unbehagen. Tu, was sich gut anfühlt.',
+    challenge: 'Wann hast du zuletzt etwas getan, das sich nicht sofort gut anfühlte, aber gut war?',
+    quotes: {
+      full:  'Er greift an, ohne nachzudenken. Impuls. Reaktion. Kein Raum für Disziplin.',
+      half:  'Er ist verwirrt. Du weichst nicht aus — du gehst weiter. Das kennt er nicht.',
+      low:   'Etwas in ihm bricht. Nicht der Körper — die Gewissheit, dass Instinkt immer gewinnt.',
+      dying: 'Er schreit. Kein Schmerz — Unverständnis.'
+    },
+    victory: 'Der Affe fällt. Und du bemerkst: Es fühlt sich gut an. Besser als Aufhören je täte.',
+    defeat:  'Er brüllt triumphierend. Der Instinkt hat gewonnen. Diesmal.'
+  },
+  godrick: {
+    epithet: 'Sammler unvollendeter Versprechen',
+    intro: 'Er hat alles gesammelt. Kraft von anderen. Fähigkeiten, die er nicht verdient hat. Er ist groß — und hohl. Denn nichts davon gehört wirklich ihm.',
+    challenge: 'Was hast du dir in den letzten Wochen wirklich erarbeitet — und was nur geplant?',
+    quotes: {
+      full:  'Er protzt. Mit fremder Stärke, fremden Siegen. Er weiß selbst nicht mehr, was darunter liegt.',
+      half:  'Die Fassade bekommt Risse. Etwas Echtes kämpft sich hervor — und es ist schwächer.',
+      low:   'Er schreit wütend. Die angehefteten Arme kämpfen unabhängig — sie kennen ihn nicht mehr.',
+      dying: 'Alle Masken fallen. Was bleibt, ist erschreckend klein.'
+    },
+    victory: 'Godrick zerfällt in seine Einzelteile. Und du bist noch ganz.',
+    defeat:  'Er wächst. Mit deiner Niederlage. Mit jedem Tag, den du nicht erscheinst.'
+  },
+  rennala: {
+    epithet: 'Herrin der vergangenen Größe',
+    intro: 'Sie war einmal die Mächtigste. Dann verließ sie das, was ihr Kraft gab. Seitdem lebt sie in der Erinnerung daran — und verwechselt Erinnerung mit Gegenwart.',
+    challenge: 'Hältst du an einer Vergangenheit fest, die dich an deiner Gegenwart hindert?',
+    quotes: {
+      full:  'Sie singt. Ein Lied über das, was war. Es ist schön. Es ist auch eine Falle.',
+      half:  'Die Kinder, die sie schützen, beginnen zu weichen. Die Gegenwart bricht ein.',
+      low:   'Sie hört auf zu singen. Zum ersten Mal seit langer Zeit: Stille.',
+      dying: 'Ein letztes Lächeln. Nicht traurig — erleichtert.'
+    },
+    victory: 'Rennala sinkt in den Mondlichtboden. Sie schläft. Endlich wirklich.',
+    defeat:  'Das Lied geht weiter. Und du merkst: Du hast mitgesummt.'
+  },
+  pontiff: {
+    epithet: 'Der Selbstbetrug des Erfahrenen',
+    intro: 'Er war so lange auf diesem Weg, dass er vergessen hat, warum er gegangen ist. Er bezeichnet Routine als Tugend. Stagnation als Weisheit. Er ist gefährlich — weil er so überzeugend klingt.',
+    challenge: 'Tust du es aus Überzeugung — oder aus Gewohnheit, die sich wie Überzeugung anfühlt?',
+    quotes: {
+      full:  'Er bewegt sich mit makelloser Technik. Jede Bewegung sitzt. Kein Raum für Wachstum.',
+      half:  'Sein Schatten löst sich von ihm. Auch er weiß nicht mehr, welcher der echte ist.',
+      low:   'Beide kämpfen jetzt — Maske und Gesicht. Keiner gewinnt.',
+      dying: 'Er sieht dich an. Nicht als Gegner. Als Spiegel.'
+    },
+    victory: 'Pontiff zerfällt. Sein Schatten verschwindet zuletzt — als hätte er noch etwas zu sagen gehabt.',
+    defeat:  'Er trägt dich ein in sein Buch der Versuche. Unter tausend anderen Namen.'
+  },
+  twins: {
+    epithet: 'Brüder des aufgeschobenen Lebens',
+    intro: 'Einer ist krank. Der andere weigert sich, weiterzugehen, bis der erste bereit ist. Sie warten aufeinander seit Ewigkeiten. Keiner macht den ersten Schritt.',
+    challenge: 'Worauf wartest du, bevor du anfängst — wirklich anfängst?',
+    quotes: {
+      full:  'Einer kämpft. Der andere beobachtet, bereit zu helfen. Zusammen sind sie etwas, das du noch nicht gesehen hast.',
+      half:  'Der Kranke tritt vor. Jetzt kämpft er für den, der für ihn gekämpft hat.',
+      low:   'Sie sind synchron. Krank oder gesund spielt keine Rolle mehr.',
+      dying: 'Sie fallen zusammen. Wie sie gelebt haben — niemals allein.'
+    },
+    victory: 'Die Fürsten sinken. Und du fragst dich: Worauf habe ich selbst gewartet?',
+    defeat:  'Sie warten weiter. Aufeinander. Auf dich. Auf den richtigen Moment.'
+  },
+  isshin: {
+    epithet: 'Der Preis echter Disziplin',
+    intro: 'Er hat alles geopfert. Familie. Ruhe. Bequemlichkeit. Er ist kein Feind — er ist ein Standard. Und Standards tun weh.',
+    challenge: 'Bis wohin bist du wirklich bereit zu gehen?',
+    quotes: {
+      full:  'Er greift nicht sofort an. Er beobachtet. Er lernt dich kennen, schneller als du denkst.',
+      half:  'Er lächelt kaum merklich. Nicht Herablassung — Anerkennung.',
+      low:   'Er kämpft mit letzter Kraft. Und diese Kraft ist erschreckend.',
+      dying: 'Er schließt die Augen. Ein Nicken. Du hast bestanden.'
+    },
+    victory: 'Isshin sinkt. Er hat dir nichts gegeben — er hat gezeigt, was du dir nehmen kannst.',
+    defeat:  'Er steckt sein Schwert weg. "Nicht heute," sagt er. Es klingt nicht wie Kritik.'
+  },
+  morgott: {
+    epithet: 'König der verborgenen Wunden',
+    intro: 'Er trägt alles unter dem Mantel. Die Verletzungen. Die Flüche. Die Erschöpfung. Er kämpft trotzdem — und nennt es Pflicht, obwohl es längst Sturheit ist.',
+    challenge: 'Kämpfst du heute aus Stärke — oder kämpfst du, weil du nicht weißt, wie man aufhört?',
+    quotes: {
+      full:  'Er bewegt sich schwer, aber zielstrebig. Man sieht die Last. Er zeigt sie nicht.',
+      half:  'Er hustet. Er macht weiter. Man fragt sich: Für wen tut er das eigentlich?',
+      low:   'Der Mantel fällt. Darunter: mehr Narben als Haut.',
+      dying: 'Er lacht — kurz, echt. "Endlich," sagt er leise.'
+    },
+    victory: 'Morgott fällt mit Würde. Unter dem König war ein Mensch, der sich endlich ausruhen darf.',
+    defeat:  'Er trägt die Last weiter. Allein. Wie immer.'
+  },
+  nameless: {
+    epithet: 'Der ohne Zeugen',
+    intro: 'Er existiert außerhalb der Geschichte. Kein Name. Kein Erbe. Nur er und sein Drache — und ein Kampf, den niemand gesehen hat. Er braucht keine Anerkennung. Das macht ihn gefährlicher als alle anderen.',
+    challenge: 'Würdest du dieselben Dinge tun, wenn niemand zuschaut?',
+    quotes: {
+      full:  'Der Drache landet. Er steigt ab. Kein Ritual. Kein Publikum. Nur der Kampf.',
+      half:  'Er kämpft jetzt allein. Ruhiger. Fokussierter. Wütender.',
+      low:   'Seine Bewegungen werden kleiner, präziser. Als hätte er diese Stunde geübt.',
+      dying: 'Er sieht dich an. Kein Feind, kein Spiegel — ein Ebenbürtiger.'
+    },
+    victory: 'Der Namenlose sinkt. Und du verstehst: Manche Dinge existieren nur zwischen dir und dir selbst.',
+    defeat:  'Er verschwindet wie er kam — lautlos. War er wirklich da?'
+  },
+  gael: {
+    epithet: 'Der letzte Pilger',
+    intro: 'Er hat die ganze Welt durchquert. Durch Tod, durch Feuer, durch das Ende aller Dinge. Er hat nie aufgehört. Nicht einmal, als es keinen Grund mehr gab.',
+    challenge: 'Was würde dich dazu bringen, aufzuhören — wirklich aufzuhören?',
+    quotes: {
+      full:  'Er hat nichts mehr zu verlieren. Das macht ihn nicht schwach — es macht ihn frei.',
+      half:  'Er blutet. Er stolpert. Er macht weiter. Es ist nicht heroisch. Es ist einfach so.',
+      low:   'Etwas in ihm leuchtet — nicht Kraft, nicht Magie. Etwas älteres.',
+      dying: 'Er streckt die Hand aus. Nicht nach Hilfe — nach dir.'
+    },
+    victory: 'Gael fällt. Am Ende des letzten Weges liegt er — und irgendwie weißt du, dass er es so wollte.',
+    defeat:  'Er pilgert weiter. Durch deine Niederlage, durch morgen, durch alles.'
+  },
+  friede: {
+    epithet: 'Botin des ewigen Stillstands',
+    intro: 'Sie hat Frieden gefunden — indem sie alles zum Stillstand gebracht hat. Kein Wachstum. Kein Schmerz. Auch keine Freude. Sie nennt es Erleuchtung. Es ist Versteinerung.',
+    challenge: 'Welche Bequemlichkeit hält dich davon ab, unbequem zu wachsen?',
+    quotes: {
+      full:  '"Ruh dich aus," flüstert sie. Ihre Stimme ist echt — und das ist das Gefährliche.',
+      half:  'Sie zeigt ihr wahres Gesicht. Der Frieden war nie echt — nur gut verborgen.',
+      low:   'Drei Formen. Jede ein anderes Gesicht der Stagnation.',
+      dying: 'Die Asche kühlt ab. Darunter: Erde. Und in der Erde: Möglichkeit.'
+    },
+    victory: 'Friede löst sich auf. Die Asche fliegt auseinander. Etwas hat sich bewegt — nach langer Zeit.',
+    defeat:  'Der Frost legt sich wieder. Sanft. Unaufhaltsam. Gewohnheit.'
+  },
+  malenia: {
+    epithet: 'Die Fäulnis des Nie-Gut-Genug',
+    intro: 'Sie wurde nie besiegt. Auch sich selbst nicht. Sie hat sich einfach immer weiter übertroffen — bis die Fäulnis in ihr schneller wuchs als das Wachstum. Perfektionismus ist ihr Fluch, nicht ihre Stärke.',
+    challenge: 'Akzeptierst du 80% Fortschritt — oder wartest du auf die perfekte Woche, die nie kommt?',
+    quotes: {
+      full:  'Jeder Schlag gegen dich heilt sie. Deine Fehler nähren sie. Sie wurde gebaut, um von Rückschlägen zu profitieren.',
+      half:  '"Ich habe noch nie verloren," sagt sie. Man glaubt ihr. Das ist das Problem.',
+      low:   'Die Fäulnis blüht auf. Auf den Flügeln Rot. In den Augen kein Hass — nur Entschlossenheit.',
+      dying: 'Sie fällt zum ersten Mal. Es überrascht sie aufrichtig.'
+    },
+    victory: 'Malenia sinkt. Du hast nicht perfekt gespielt. Du hast durchgespielt. Das ist der Unterschied.',
+    defeat:  'Sie heilt. Vollständig. Alle Fortschritte dieser Woche — zurück. Sie nennt das natürlich.'
+  },
+  elden: {
+    epithet: 'Das Unbekannte jenseits der Grenzen',
+    intro: 'Es gibt keine Geschichte über ihn, die vollständig wäre. Er ist das, was wartet, wenn alle anderen Grenzen gefallen sind. Nicht Feind. Nicht Freund. Die Frage, die bleibt, wenn alle anderen beantwortet sind.',
+    challenge: 'Was tust du, wenn du alles erreicht hast, was du dir vorgenommen hattest?',
+    quotes: {
+      full:  'Er ist still. Er ist groß. Er ist alt. Er hat gesehen, wie viele Menschen hier standen und dann gegangen sind.',
+      half:  'Er verändert sich. Nicht um dich zu erschrecken — um dich zu prüfen.',
+      low:   'Das Licht in ihm wird schwächer. Darunter: Dunkelheit. Darunter: etwas Neues.',
+      dying: 'Kein Schrei. Kein Drama. Nur ein langsames Verblassen — wie das Ende eines langen Tages.'
+    },
+    victory: 'Das Elden Beast löst sich auf in Licht. Was bleibt, ist kein Sieg — es ist ein Anfang.',
+    defeat:  'Es wartet. Es hat immer gewartet. Es hat keine Eile — das hat es nie gehabt.'
+  }
+};
