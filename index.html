@@ -9,72 +9,59 @@
   <title>Ashen Chronicle</title>
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icon.svg">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="app.css">
 </head>
 <body>
-  <div id="app">
-    <!-- Toast notification -->
-    <div id="toast" class="toast"></div>
+<div id="app">
+  <div id="toast" class="toast"></div>
 
-    <!-- Level-up overlay -->
-    <div id="levelup-overlay" class="overlay hidden">
-      <div class="overlay-box">
-        <div class="overlay-glyph">✦</div>
-        <div id="lu-attr" class="lu-attr"></div>
-        <div id="lu-level" class="lu-level"></div>
-        <div id="lu-quote" class="lu-quote"></div>
-        <button class="btn-ghost" onclick="closeLevelUp()">So it is...</button>
-      </div>
+  <!-- Level-up overlay -->
+  <div id="levelup-overlay" class="overlay hidden">
+    <div class="overlay-box">
+      <div class="overlay-glyph">✦</div>
+      <div id="lu-attr" class="lu-attr"></div>
+      <div id="lu-level" class="lu-level"></div>
+      <div id="lu-quote" class="lu-quote"></div>
+      <button class="btn-ghost" onclick="closeLevelUp()">So it is...</button>
     </div>
-
-    <!-- Habit input modal -->
-    <div id="habit-overlay" class="overlay hidden">
-      <div class="overlay-backdrop" onclick="closeHabitModal()"></div>
-      <div class="overlay-box" id="habit-modal-box"></div>
-    </div>
-
-    <!-- Settings modal -->
-    <div id="settings-overlay" class="overlay hidden">
-      <div class="overlay-backdrop" onclick="closeSettings()"></div>
-      <div class="overlay-box" id="settings-box"></div>
-    </div>
-
-    <!-- Tab panels -->
-    <div id="panels">
-      <div id="tab-dashboard" class="panel active"></div>
-      <div id="tab-habits"    class="panel"></div>
-      <div id="tab-boss"      class="panel"></div>
-      <div id="tab-stats"     class="panel"></div>
-      <div id="tab-inventory" class="panel"></div>
-    </div>
-
-    <!-- Bottom navigation -->
-    <nav id="bottom-nav">
-      <button class="nav-btn active" data-tab="dashboard" onclick="switchTab('dashboard')">
-        <span class="nav-ico">⚑</span>
-        <span class="nav-lbl">Realm</span>
-      </button>
-      <button class="nav-btn" data-tab="habits" onclick="switchTab('habits')">
-        <span class="nav-ico">⚔</span>
-        <span class="nav-lbl">Habits</span>
-      </button>
-      <button class="nav-btn" data-tab="boss" onclick="switchTab('boss')">
-        <span class="nav-ico">☠</span>
-        <span class="nav-lbl">Boss</span>
-      </button>
-      <button class="nav-btn" data-tab="stats" onclick="switchTab('stats')">
-        <span class="nav-ico">⚗</span>
-        <span class="nav-lbl">Attributes</span>
-      </button>
-      <button class="nav-btn" data-tab="inventory" onclick="switchTab('inventory')">
-        <span class="nav-ico">⚜</span>
-        <span class="nav-lbl">Inventory</span>
-      </button>
-    </nav>
   </div>
-  <script src="data.js"></script>
-  <script src="app.js"></script>
+
+  <!-- Habit / Quest input modal -->
+  <div id="habit-overlay" class="overlay hidden">
+    <div class="overlay-backdrop" onclick="closeHabitModal()"></div>
+    <div class="overlay-box" id="habit-modal-box"></div>
+  </div>
+
+  <!-- Settings modal -->
+  <div id="settings-overlay" class="overlay hidden">
+    <div class="overlay-backdrop" onclick="closeSettings()"></div>
+    <div class="overlay-box" id="settings-box"></div>
+  </div>
+
+  <!-- Fixed Realm header -->
+  <div id="realm-header"></div>
+
+  <!-- Tab panels -->
+  <div id="panels">
+    <div id="tab-habits"    class="panel active"></div>
+    <div id="tab-quests"    class="panel"></div>
+    <div id="tab-boss"      class="panel"></div>
+    <div id="tab-stats"     class="panel"></div>
+    <div id="tab-inventory" class="panel"></div>
+  </div>
+
+  <!-- Bottom navigation -->
+  <nav id="bottom-nav">
+    <button class="nav-btn active" data-tab="habits"    onclick="switchTab('habits')"><span class="nav-ico">⚔</span><span class="nav-lbl">Habits</span></button>
+    <button class="nav-btn"        data-tab="quests"    onclick="switchTab('quests')"><span class="nav-ico">📋</span><span class="nav-lbl">Quests</span></button>
+    <button class="nav-btn"        data-tab="boss"      onclick="switchTab('boss')"><span class="nav-ico">☠</span><span class="nav-lbl">Boss</span></button>
+    <button class="nav-btn"        data-tab="stats"     onclick="switchTab('stats')"><span class="nav-ico">⚗</span><span class="nav-lbl">Stats</span></button>
+    <button class="nav-btn"        data-tab="inventory" onclick="switchTab('inventory')"><span class="nav-ico">⚜</span><span class="nav-lbl">Gear</span></button>
+  </nav>
+</div>
+<script src="data.js"></script>
+<script src="quest.js"></script>
+<script src="app.js"></script>
 </body>
 </html>

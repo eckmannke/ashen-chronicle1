@@ -792,3 +792,93 @@ body {
 .ach-row.locked .ach-name { color:var(--text3); }
 .ach-name { font-family:'Cinzel',serif; font-size:13px; margin-bottom:2px; }
 .ach-desc { font-size:12px; color:var(--text3); line-height:1.4; }
+
+/* ============================================================
+   v3 ADDITIONS — Realm Header, Quests, Avatar wrap
+   ============================================================ */
+
+/* Realm header */
+#realm-header {
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  z-index: 9;
+}
+.realm-inner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+}
+.realm-left { flex: 1; min-width: 0; }
+.realm-sl   { font-size: 10px; color: var(--ember); letter-spacing: .15em; font-family: 'Cinzel', serif; }
+.realm-name { font-family: 'Cinzel', serif; font-size: 15px; color: var(--gold); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.realm-title{ font-size: 10px; color: var(--text3); font-style: italic; }
+.realm-habits { display: flex; gap: 4px; margin-top: 3px; }
+.rh-dot { font-size: 14px; opacity: .28; filter: grayscale(1); transition: all .2s; }
+.rh-dot.done { opacity: 1; filter: none; }
+.realm-mid { display: flex; flex-direction: column; align-items: center; min-width: 72px; }
+.realm-ember-lbl { font-size: 9px; color: var(--text3); letter-spacing: .08em; text-transform: uppercase; }
+.realm-ember-val { font-family: 'Cinzel', serif; font-size: 13px; color: var(--ember2); }
+.realm-ebar { width: 64px; height: 4px; background: var(--bg); border: 1px solid var(--border); border-radius: 2px; overflow: hidden; margin-top: 2px; }
+.realm-efill { height: 100%; background: linear-gradient(90deg, var(--ember), var(--ember2)); border-radius: 2px; transition: width .4s; }
+.realm-right { min-width: 80px; text-align: right; }
+.realm-boss-name { font-family: 'Cinzel', serif; font-size: 11px; color: var(--text2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 90px; }
+.realm-boss-hp-bar { height: 5px; background: var(--bg); border: 1px solid var(--border); border-radius: 2px; overflow: hidden; margin: 3px 0; }
+.realm-boss-hp-fill { height: 100%; background: linear-gradient(90deg, #6b0000, #cc2020); border-radius: 2px; transition: width .4s; }
+.realm-boss-days { font-size: 10px; color: var(--text3); }
+.realm-boss-days.urgent { color: var(--red); font-family: 'Cinzel', serif; }
+
+/* Panels must account for realm header height */
+#app { display: flex; flex-direction: column; height: 100vh; height: 100dvh; overflow: hidden; }
+#panels { flex: 1; overflow: hidden; position: relative; }
+.panel { position: absolute; inset: 0; overflow-y: auto; overflow-x: hidden; padding: 12px 14px calc(var(--nav-h) + 12px); display: none; }
+.panel.active { display: block; }
+
+/* Quest cards */
+.quest-card {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 12px 14px;
+  margin-bottom: 10px;
+  transition: border-color .2s;
+}
+.quest-card.quest-overdue { border-color: var(--red)44; background: #1a080855; }
+.quest-name { font-family: 'Cinzel', serif; font-size: 14px; color: var(--text); }
+
+.btn-add-quest {
+  background: var(--ember)22;
+  border: 1px solid var(--ember)44;
+  border-radius: var(--r);
+  color: var(--ember2);
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  padding: 5px 10px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all .2s;
+}
+.btn-add-quest:hover { background: var(--ember)33; border-color: var(--ember); }
+
+.btn-complete-quest {
+  background: var(--green)22;
+  border: 1px solid var(--green)55;
+  border-radius: var(--r);
+  color: var(--green);
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  padding: 6px 10px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all .2s;
+}
+.btn-complete-quest:hover { background: var(--green)33; }
+
+/* Modal fields */
+.modal-field { margin-bottom: 12px; text-align: left; }
+
+/* Avatar wrap enlarged for new SVG */
+.avatar-wrap { width: 180px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 10px 8px; }
+
+/* Service worker update — bump cache name in sw.js */

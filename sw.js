@@ -1,5 +1,5 @@
-const CACHE = 'ashen-v1';
-const FILES = ['./index.html', './app.css', './data.js', './app.js', './manifest.json', './icon.svg'];
+const CACHE = 'ashen-v3';
+const FILES = ['./index.html', './app.css', './data.js', './quest.js', './app.js', './manifest.json', './icon.svg'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)));
